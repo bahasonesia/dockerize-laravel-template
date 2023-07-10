@@ -22,3 +22,6 @@ To stop container from running
 ```
 docker compose down
 ```
+
+By default, app will be forwarded in port 80
+If you're running multiple container or port 80 is used, change them to any other port in container NGINX
