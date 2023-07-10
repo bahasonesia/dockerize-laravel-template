@@ -1,0 +1,68 @@
+version: '3'
+
+networks:
+  bahaso:
+
+volumes:
+  database-volume:
+
+services:
+  app:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - nginx
+      - redis
+      - database
+    networks:
+      - bahaso
+
+  nginx:
+    build:
+      context: ./dockerfiles
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html:delegated
+    networks:
+      - bahaso
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - bahaso
+
+  database:
+    image: mysql:8.0
+    restart: unless-stopped
+    tty: true
+    environment:
+      MYSQL_DATABASE: bahaso
+      MYSQL_USER: userdocker
+      MYSQL_PASSWORD: passdocker
+      MYSQL_ROOT_PASSWORD: rootpassword
+    networks:
+      - bahaso
+    volumes:
+      - database-volume:/var/lib/mysql
+
+
+  npm:
+    image: node:current-alpine
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: [ 'npm' ]
+    networks:
+      - bahaso
