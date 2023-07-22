@@ -15,8 +15,8 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     volumes:
-      - .:/var/www/html:delegated
-      - ./dockerfiles/php/:/usr/local/etc/php/conf.d/:delegated
+      - ./src:/var/www/html:delegated
+      - ./dockerfiles/php/laravel.ini:/usr/local/etc/php/conf.d/laravel.ini:delegated
     depends_on:
       - nginx
       - redis
@@ -34,7 +34,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - .:/var/www/html:delegated
+      - ./src:/var/www/html:delegated
     networks:
       - bahaso
 
