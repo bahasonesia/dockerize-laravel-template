@@ -17,8 +17,10 @@ RUN sed -i "s/user = www-data/user = bahaso/g" /usr/local/etc/php-fpm.d/www.conf
 RUN sed -i "s/group = www-data/group = bahaso/g" /usr/local/etc/php-fpm.d/www.conf
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
 
+# Install dependencies and PHP extensions
 RUN apk add --update --no-cache \
     build-base \
+    autoconf \
     zlib-dev \
     libpng-dev \
     bzip2-dev \
@@ -33,8 +35,9 @@ RUN apk add --update --no-cache \
     bcmath \
     bz2 \
     intl \
-    zip \
-    && pecl install imagick \
+    zip
+
+RUN pecl install imagick \
     && docker-php-ext-enable imagick
 
 RUN mkdir -p /usr/src/php/ext/redis \
